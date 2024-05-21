@@ -3,7 +3,7 @@ from paddleocr import PaddleOCR
 import os
 import matplotlib.pyplot as plt
 import matplotlib.patches as patches
-import matplotlib.font_manager as font_man
+from matplotlib.widgets import RectangleSelector
 
 # 获取当前脚本所在目录的路径
 script_dir = os.path.dirname(os.path.abspath(__file__))
@@ -54,17 +54,39 @@ for line in result[0]:
 fig, ax = plt.subplots(1, figsize=(12, 12))
 ax.imshow(img_resized)
 
-# 设置自定义字体路径
-custom_font_path = '.\\ChineseSupport\\SourceHanSans_Normal.ttf'
-
-# 定义自定义字体对象
-custom_font = font_man.FontProperties(fname=custom_font_path)
-
-# 绘制检测框和文本
-for i, box in enumerate(boxes):
-    # 创建一个多边形对象
+# 绘制检测框
+patches_list = []
+for box in boxes:
     polygon = patches.Polygon(box, closed=True, edgecolor='red', linewidth=2, fill=False)
+    patches_list.append(polygon)
     ax.add_patch(polygon)
+
+selected_texts = []
+
+
+def on_select(eclick, erelease):
+    """ 鼠标框选回调函数 """
+    global selected_texts
+    selected_texts.clear()
+    x1, y1 = eclick.xdata, eclick.ydata
+    x2, y2 = erelease.xdata, erelease.ydata
+
+    for i, box in enumerate(boxes):
+        # 检查检测框的四个顶点是否在选择区域内
+        in_selection = any(
+            (min(x1, x2) <= point[0] <= max(x1, x2) and min(y1, y2) <= point[1] <= max(y1, y2)) for point in box)
+        if in_selection:
+            selected_texts.append(texts[i])
+
+    print("Selected texts:")
+    for text in selected_texts:
+        print(text)
+
+
+# 创建一个矩形选择器
+toggle_selector = RectangleSelector(ax, on_select, useblit=True,
+                                    button=[1], minspanx=5, minspany=5, spancoords='data',
+                                    interactive=True)
 
 plt.axis('off')
 plt.show()
