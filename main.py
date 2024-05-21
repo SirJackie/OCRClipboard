@@ -1,6 +1,9 @@
 from PIL import Image
-from paddleocr import PaddleOCR, draw_ocr
+from paddleocr import PaddleOCR
 import os
+import matplotlib.pyplot as plt
+import matplotlib.patches as patches
+import matplotlib.font_manager as font_man
 
 # 获取当前脚本所在目录的路径
 script_dir = os.path.dirname(os.path.abspath(__file__))
@@ -36,18 +39,32 @@ img_resized.save(resized_img_path)
 # 进行文字检测和识别
 result = ocr.ocr(resized_img_path, cls=True)
 
-# 输出识别结果
+# 输出识别结果并准备绘制数据
 boxes = []
+texts = []
 print("------------------------------")
 for line in result[0]:
     coordinate = line[0]
     text = line[1]
     print(coordinate, text)
     boxes.append(coordinate)
+    texts.append(text[0])  # 只取识别的文本内容，不包括置信度
 
-# 将识别结果绘制在图片上并显示
-image_drawn = draw_ocr(img_resized, boxes)
+# 使用 matplotlib 绘制识别结果
+fig, ax = plt.subplots(1, figsize=(12, 12))
+ax.imshow(img_resized)
 
-# 转换为 PIL 图像对象并显示
-image_pil = Image.fromarray(image_drawn)
-image_pil.show()
+# 设置自定义字体路径
+custom_font_path = '.\\ChineseSupport\\SourceHanSans_Normal.ttf'
+
+# 定义自定义字体对象
+custom_font = font_man.FontProperties(fname=custom_font_path)
+
+# 绘制检测框和文本
+for i, box in enumerate(boxes):
+    # 创建一个多边形对象
+    polygon = patches.Polygon(box, closed=True, edgecolor='red', linewidth=2, fill=False)
+    ax.add_patch(polygon)
+
+plt.axis('off')
+plt.show()
