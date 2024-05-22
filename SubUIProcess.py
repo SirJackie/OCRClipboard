@@ -2,16 +2,23 @@ import multiprocessing
 import tkinter as tk
 from tkinter import scrolledtext
 import time
+import ctypes
 
 
 def GUIProcess(pipe_conn):
+    # 设置DPI感知
+    try:
+        ctypes.windll.shcore.SetProcessDpiAwareness(1)
+    except Exception as e:
+        print(f"SetProcessDpiAwareness failed: {e}")
+
     # 创建Tkinter窗口
     root = tk.Tk()
     root.title("Text Display")
 
     # 创建一个ScrolledText小部件来显示文本
     text_area = scrolledtext.ScrolledText(root, wrap=tk.WORD, width=50, height=20)
-    text_area.pack(padx=10, pady=10)
+    text_area.pack(padx=10, pady=10, expand=True, fill=tk.BOTH)
 
     def check_for_messages():
         # 检查管道中是否有消息
