@@ -79,8 +79,12 @@ def on_select(eclick, erelease):
             selected_texts.append(texts[i])
 
     print("Selected texts:")
+
+    mergeStr = ""
     for text in selected_texts:
-        print(text)
+        mergeStr += text
+
+    print(mergeStr)
 
 
 # 创建一个矩形选择器
@@ -89,4 +93,5 @@ toggle_selector = RectangleSelector(ax, on_select, useblit=True,
                                     interactive=True)
 
 plt.axis('off')
+plt.subplots_adjust(left=0.0, right=1.0, top=1.0, bottom=0.0)
 plt.show()
