@@ -5,6 +5,7 @@ import tkinter.font as tk_font
 import time
 import ctypes
 import pyglet
+import atexit
 
 
 def GUIProcess(pipe_conn):
@@ -53,6 +54,9 @@ class ClipboardUI:
         self.process = multiprocessing.Process(target=GUIProcess, args=(self.child_conn,))
         self.process.start()
 
+        # Auto Destruction when Exit.
+        atexit.register(self.Close)
+
     def Send(self, string):
         self.parent_conn.send(string)
 
@@ -74,5 +78,3 @@ if __name__ == '__main__':
 
         if myStr == "exit":
             break
-
-    clpUi.Close()
