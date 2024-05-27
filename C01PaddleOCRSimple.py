@@ -51,6 +51,7 @@ class OCRVisualizer:
         self.selected_texts = None
         self.patches_list = None
         self.mergeStr = None
+        self.externalCallback = None
 
         # 输出识别结果
         self.boxes = []
@@ -86,6 +87,9 @@ class OCRVisualizer:
         plt.subplots_adjust(left=0.0, right=1.0, top=1.0, bottom=0.0)
         plt.show()
 
+    def BindExternalCallback(self, func):
+        self.externalCallback = func
+
     def OnSelectCallback(self, eclick, erelease):
         self.selected_texts.clear()
         x1, y1 = eclick.xdata, eclick.ydata
@@ -98,13 +102,16 @@ class OCRVisualizer:
             if in_selection:
                 self.selected_texts.append(self.texts[i])
 
-        print("Selected texts:")
-
         self.mergeStr = ""
         for text in self.selected_texts:
             self.mergeStr += text
 
-        print(self.mergeStr)
+        if self.externalCallback is not None:
+            self.externalCallback(self.mergeStr)
+
+
+def MyExternalCallback(string):
+    print(string)
 
 
 if __name__ == "__main__":
@@ -116,4 +123,5 @@ if __name__ == "__main__":
 
     # Visualize
     ocrVisualizer = OCRVisualizer(result, img_resized)
+    ocrVisualizer.BindExternalCallback(MyExternalCallback)
     ocrVisualizer.Visualize()
