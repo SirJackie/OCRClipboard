@@ -52,6 +52,7 @@ class OCRVisualizer:
         self.patches_list = None
         self.mergeStr = None
         self.externalCallback = None
+        self.img_resized = img_resized
 
         # 输出识别结果
         self.boxes = []
@@ -67,7 +68,7 @@ class OCRVisualizer:
     def Visualize(self):
         # 绘制数据
         fig, ax = plt.subplots(1, figsize=(12, 12))
-        ax.imshow(img_resized)
+        ax.imshow(self.img_resized)
 
         # 绘制检测框
         self.patches_list = []
