@@ -20,8 +20,9 @@ def get_window_handle(title):
 # 嵌入窗口
 def embed_window(parent, hwnd, x, y, width, height):
     win32gui.SetParent(hwnd, parent)
-    win32gui.SetWindowLong(hwnd, win32con.GWL_STYLE, win32gui.GetWindowLong(hwnd, win32con.GWL_STYLE) & ~win32con.WS_CAPTION)
-    win32gui.SetWindowPos(hwnd, None, x, y, width, height, win32con.SWP_NOZORDER | win32con.SWP_NOACTIVATE)
+    win32gui.SetWindowLong(hwnd, win32con.GWL_STYLE,
+                           win32gui.GetWindowLong(hwnd, win32con.GWL_STYLE) & ~win32con.WS_CAPTION & ~win32con.WS_THICKFRAME)
+    win32gui.SetWindowPos(hwnd, None, x, y, width, height, win32con.SWP_NOZORDER | win32con.SWP_NOACTIVATE | win32con.SWP_FRAMECHANGED)
 
 
 # 主程序
@@ -55,10 +56,16 @@ def main():
     embed_window(root.winfo_id(), hwnd1, 0, 0, root.winfo_width() // 2, root.winfo_height())
     embed_window(root.winfo_id(), hwnd2, root.winfo_width() // 2, 0, root.winfo_width() // 2, root.winfo_height())
 
+    # 将焦点设置回主窗口
+    win32gui.SetForegroundWindow(root.winfo_id())
+
     # 当主窗口尺寸改变时调整子窗口大小
     def on_resize(event):
+        pass
         embed_window(root.winfo_id(), hwnd1, 0, 0, root.winfo_width() // 2, root.winfo_height())
-        embed_window(root.winfo_id(), hwnd2, root.winfo_width() // 2, 0, root.winfo_width() // 2, root.winfo_height())
+        # embed_window(root.winfo_id(), hwnd2, root.winfo_width() // 2, 0, root.winfo_width() // 2, root.winfo_height())
+        # # 将焦点设置回主窗口
+        # win32gui.SetForegroundWindow(root.winfo_id())
 
     root.bind("<Configure>", on_resize)
 
