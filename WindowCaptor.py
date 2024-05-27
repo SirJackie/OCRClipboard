@@ -59,13 +59,23 @@ def main():
     # 将焦点设置回主窗口
     win32gui.SetForegroundWindow(root.winfo_id())
 
+    # 记录主窗口的初始大小
+    last_width = root.winfo_width()
+    last_height = root.winfo_height()
+
     # 当主窗口尺寸改变时调整子窗口大小
     def on_resize(event):
-        pass
-        embed_window(root.winfo_id(), hwnd1, 0, 0, root.winfo_width() // 2, root.winfo_height())
-        # embed_window(root.winfo_id(), hwnd2, root.winfo_width() // 2, 0, root.winfo_width() // 2, root.winfo_height())
-        # # 将焦点设置回主窗口
-        # win32gui.SetForegroundWindow(root.winfo_id())
+        nonlocal last_width, last_height
+        new_width = root.winfo_width()
+        new_height = root.winfo_height()
+        if new_width != last_width or new_height != last_height:
+            embed_window(root.winfo_id(), hwnd1, 0, 0, new_width // 2, new_height)
+            embed_window(root.winfo_id(), hwnd2, new_width // 2, 0, new_width // 2, new_height)
+            # 将焦点设置回主窗口
+            win32gui.SetForegroundWindow(root.winfo_id())
+            # 更新记录的窗口大小
+            last_width = new_width
+            last_height = new_height
 
     root.bind("<Configure>", on_resize)
 

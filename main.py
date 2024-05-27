@@ -12,6 +12,7 @@ if __name__ == "__main__":
 
     # UI
     clpUi = ClipboardUI()
+    clpUi.Send("<鼠标拖动，框选要识别的文字>")
     time.sleep(0.1)  # Wait for UI Process to Create Window.
 
     # Image Path
