@@ -16,7 +16,7 @@ if __name__ == "__main__":
     time.sleep(0.1)  # Wait for UI Process to Create Window.
 
     # Image Path
-    img_path = "./Images/01/IMG_20240517_094904.jpg"
+    img_path = "./Images/师兄啊师兄优酷目录.jpg"
 
     # Detect
     ocrDetector = OCRDetector()
