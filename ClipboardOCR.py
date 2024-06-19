@@ -5,6 +5,7 @@ import matplotlib.pyplot as plt
 import matplotlib.patches as patches
 from matplotlib.widgets import RectangleSelector
 from PathHelper import *
+from ImageHelper import *
 
 
 class OCRDetector:
@@ -27,36 +28,21 @@ class OCRDetector:
                              cls_model_dir=cls_model_path, cls_params_path=cls_params_path)
 
     def Detect(self, img_path):
-        # 打开图像并调整分辨率
-        img = Image.open(img_path)
-        if img.mode == 'RGBA':
-            img = img.convert('RGB')
-
-        width, height = img.size
-        new_width = 1920
-        new_height = int(height * (new_width / width))
-        img_resized = img.resize((new_width, new_height))  # 保持宽高比例调整分辨率
-
-        # 保存调整后的图像
-        tempDir = TempDir()
-        resized_img_path = tempDir.At("resized_image", ".jpg")
-        img_resized.save(resized_img_path)
-
         # Do OCR Detection
-        result_array = self.ocr.ocr(resized_img_path, cls=True)
+        result_array = self.ocr.ocr(img_path, cls=True)
         assert len(result_array) == 1
 
         # 进行文字检测和识别
-        return result_array[0], img_resized
+        return result_array[0]
 
 
 class OCRVisualizer:
-    def __init__(self, result, img_resized):
+    def __init__(self, result, img_path):
         self.selected_texts = None
         self.patches_list = None
         self.mergeStr = None
         self.externalCallback = None
-        self.img_resized = img_resized
+        self.img = LoadImage(img_path)
 
         # 输出识别结果
         self.boxes = []
@@ -72,7 +58,7 @@ class OCRVisualizer:
     def Visualize(self):
         # 绘制数据
         fig, ax = plt.subplots(1, figsize=(12, 12))
-        ax.imshow(self.img_resized)
+        ax.imshow(self.img)
 
         # 绘制检测框
         self.patches_list = []
