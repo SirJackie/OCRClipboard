@@ -1,3 +1,5 @@
+import time
+
 from SubprocessHelper import Subprocess
 import json
 
@@ -38,6 +40,12 @@ if __name__ == "__main__":
     uiOCRSide.Send(img_path)
 
     while True:
-        if uiOCRSide.CanRecv():
+        if uiMainWindow.CanRecv():
+            message = uiMainWindow.Recv()
+            if message == "Close":
+                break
+        elif uiOCRSide.CanRecv():
             str = uiOCRSide.Recv()  # Not Async, It's Synced.
             uiClipSide.Send(str)
+        else:
+            time.sleep(0.01)

@@ -113,6 +113,9 @@ def UIMainWindow(pipe_conn):
 
     root.mainloop()
 
+    # Main Window was Closed
+    pipe_conn.send("Close")
+
 
 if __name__ == "__main__":
     UIMainWindow(None)
