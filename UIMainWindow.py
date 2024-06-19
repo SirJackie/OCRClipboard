@@ -87,21 +87,36 @@ def UIMainWindow(pipe_conn):
 
     # 当主窗口尺寸改变时调整子窗口大小
     def on_resize(event):
-        nonlocal last_width, last_height
         new_width = root.winfo_width()
         new_height = root.winfo_height()
-        if new_width != last_width or new_height != last_height:
-            if hwnd1:
-                embed_window(root.winfo_id(), hwnd1, 0, 0, new_width // 2, new_height)
-            if hwnd2:
-                embed_window(root.winfo_id(), hwnd2, new_width // 2, 0, new_width // 2, new_height)
+        print(new_width, new_height)
 
-            if hwnd1 and hwnd2:  # If Ready
-                # 将焦点设置回主窗口
-                win32gui.SetForegroundWindow(root.winfo_id())
-                # 更新记录的窗口大小
-                last_width = new_width
-                last_height = new_height
+        if hwnd1 and hwnd2:  # If Ready
+            # embed_window(root.winfo_id(), hwnd1, 0, 0, new_width // 2, new_height)
+            # embed_window(root.winfo_id(), hwnd2, new_width // 2, 0, new_width // 2, new_height)
+
+            embed_window(
+                root.winfo_id(), hwnd1, 0, 0, root.winfo_width() // 2, root.winfo_height()
+            )
+            embed_window(
+                root.winfo_id(), hwnd2, root.winfo_width() // 2, 0, root.winfo_width() // 2, root.winfo_height()
+            )
+
+        # nonlocal last_width, last_height
+        # new_width = root.winfo_width()
+        # new_height = root.winfo_height()
+        # if new_width != last_width or new_height != last_height:
+        #     if hwnd1:
+        #         embed_window(root.winfo_id(), hwnd1, 0, 0, new_width // 2, new_height)
+        #     if hwnd2:
+        #         embed_window(root.winfo_id(), hwnd2, new_width // 2, 0, new_width // 2, new_height)
+        #
+        #     if hwnd1 and hwnd2:  # If Ready
+        #         # 将焦点设置回主窗口
+        #         win32gui.SetForegroundWindow(root.winfo_id())
+        #         # 更新记录的窗口大小
+        #         last_width = new_width
+        #         last_height = new_height
 
     root.bind("<Configure>", on_resize)
 
