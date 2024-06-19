@@ -1,7 +1,7 @@
 from OCRDetector import OCRDetector
 from UIClipSide import UIClipSide
 from UIOCRSide import UIOCRSide
-
+from UIMainWindow import UIMainWindow
 from SubprocessHelper import Subprocess
 import json
 
@@ -14,6 +14,9 @@ if __name__ == "__main__":
 
     # Image
     img_path = "./Images/师兄啊师兄优酷目录.png"
+
+    # Create Main Window First
+    uiMainWindow = Subprocess(UIMainWindow)
 
     # OCR Detect
     ocrDetector = OCRDetector()

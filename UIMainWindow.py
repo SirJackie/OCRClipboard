@@ -48,7 +48,7 @@ def embed_window(parent, hwnd, x, y, width, height):
 
 
 # 主程序
-def UIMainWindow():
+def UIMainWindow(pipe_conn):
     root = tk.Tk()
     root.title("主窗口")
 
@@ -107,4 +107,4 @@ def UIMainWindow():
 
 
 if __name__ == "__main__":
-    UIMainWindow()
+    UIMainWindow(None)
