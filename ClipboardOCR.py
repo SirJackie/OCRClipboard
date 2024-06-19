@@ -29,6 +29,9 @@ class OCRDetector:
     def Detect(self, img_path):
         # 打开图像并调整分辨率
         img = Image.open(img_path)
+        if img.mode == 'RGBA':
+            img = img.convert('RGB')
+
         width, height = img.size
         new_width = 1920
         new_height = int(height * (new_width / width))
