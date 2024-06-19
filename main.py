@@ -38,5 +38,6 @@ if __name__ == "__main__":
     uiOCRSide.Send(img_path)
 
     while True:
-        str = uiOCRSide.Recv()  # Not Async, It's Synced.
-        uiClipSide.Send(str)
+        if uiOCRSide.CanRecv():
+            str = uiOCRSide.Recv()  # Not Async, It's Synced.
+            uiClipSide.Send(str)
