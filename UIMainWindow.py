@@ -95,11 +95,13 @@ def UIMainWindow(pipe_conn):
                 embed_window(root.winfo_id(), hwnd1, 0, 0, new_width // 2, new_height)
             if hwnd2:
                 embed_window(root.winfo_id(), hwnd2, new_width // 2, 0, new_width // 2, new_height)
-            # 将焦点设置回主窗口
-            win32gui.SetForegroundWindow(root.winfo_id())
-            # 更新记录的窗口大小
-            last_width = new_width
-            last_height = new_height
+
+            if hwnd1 and hwnd2:  # If Ready
+                # 将焦点设置回主窗口
+                win32gui.SetForegroundWindow(root.winfo_id())
+                # 更新记录的窗口大小
+                last_width = new_width
+                last_height = new_height
 
     root.bind("<Configure>", on_resize)
 
