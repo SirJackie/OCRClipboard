@@ -30,15 +30,16 @@ if __name__ == "__main__":
     uiOCRSide = Subprocess(UIOCRSide)
     uiOCRSide.Send(json.dumps(ocr_result))
     uiOCRSide.Send(img_path)
-    time.sleep(0.5)
+    # time.sleep(0.5)
 
     # UI Clip Side
     uiClipSide = Subprocess(UIClipSide)
     uiClipSide.Send("Hello, World!")
-    time.sleep(0.5)
+    # time.sleep(0.5)
 
     while True:
-        myStr = input("请输入要发送的字符串：")
+        # myStr = input("请输入要发送的字符串：")
+        myStr = "xxx"
         uiClipSide.Send(myStr)
 
         if myStr == "exit":
