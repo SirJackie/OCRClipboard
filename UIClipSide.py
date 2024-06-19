@@ -1,14 +1,13 @@
-import multiprocessing
+from SubprocessHelper import Subprocess
 import tkinter as tk
 from tkinter import scrolledtext
 import tkinter.font as tk_font
 import time
 import ctypes
 import pyglet
-import atexit
 
 
-def GUIProcess(pipe_conn):
+def UIClipSide(pipe_conn):
     # 设置DPI感知
     try:
         ctypes.windll.shcore.SetProcessDpiAwareness(1)
@@ -45,36 +44,14 @@ def GUIProcess(pipe_conn):
     root.mainloop()
 
 
-class ClipboardUI:
-    def __init__(self):
-        # Create Pipe Connection
-        self.parent_conn, self.child_conn = multiprocessing.Pipe()
-
-        # Create Sub-Process
-        self.process = multiprocessing.Process(target=GUIProcess, args=(self.child_conn,))
-        self.process.start()
-
-        # Auto Destruction when Exit.
-        atexit.register(self.Close)
-
-    def Send(self, string):
-        self.parent_conn.send(string)
-
-    def Close(self):
-        # Terminate Sub-Process
-        self.process.terminate()
-        self.process.join()
-        print("Clipboard UI Sub-Process Terminated.")
-
-
 if __name__ == '__main__':
-    clpUi = ClipboardUI()
-    clpUi.Send("Hello, World!")
+    uiClipSide = Subprocess(UIClipSide)
+    uiClipSide.Send("Hello, World!")
     time.sleep(0.5)
 
     while True:
         myStr = input("请输入要发送的字符串：")
-        clpUi.Send(myStr)
+        uiClipSide.Send(myStr)
 
         if myStr == "exit":
             break
