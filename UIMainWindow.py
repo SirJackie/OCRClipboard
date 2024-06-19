@@ -8,21 +8,43 @@ import pygetwindow as gw
 windll.shcore.SetProcessDpiAwareness(1)
 
 
-# 获取窗口句柄
-def get_window_handle(title):
-    window = gw.getWindowsWithTitle(title)
-    if window:
-        return window[0]._hWnd
-    else:
-        raise Exception(f"Window with title '{title}' not found")
+# 获取窗口句柄，定时检查直到找到窗口为止
+def get_window_handle(title, leftOrRight, root, left_label, right_label):
+    try:
+        window = gw.getWindowsWithTitle(title)
+        if window:
+            hwnd = window[0]._hWnd
+            # embed_window(root.winfo_id(), hwnd, 0, 0, root.winfo_width() // 2, root.winfo_height())
+            if leftOrRight == "Left":
+                embed_window(
+                    root.winfo_id(), hwnd, 0, 0, root.winfo_width() // 2, root.winfo_height()
+                )
+            if leftOrRight == "Right":
+                embed_window(
+                    root.winfo_id(), hwnd, root.winfo_width() // 2, 0, root.winfo_width() // 2, root.winfo_height()
+                )
+
+            return hwnd
+    except gw.PyGetWindowException:
+        pass  # Handle exception if window list cannot be retrieved
+
+    # 如果未找到窗口，则显示 "Please Wait..." 标签填充左右两部分
+    left_label.config(text="Please Wait...")
+    right_label.config(text="Please Wait...")
+
+    # 定时器，定期检查窗口是否已经可用
+    root.after(1000, lambda: get_window_handle(title, leftOrRight, root, left_label, right_label))
+    return None
 
 
 # 嵌入窗口
 def embed_window(parent, hwnd, x, y, width, height):
     win32gui.SetParent(hwnd, parent)
     win32gui.SetWindowLong(hwnd, win32con.GWL_STYLE,
-                           win32gui.GetWindowLong(hwnd, win32con.GWL_STYLE) & ~win32con.WS_CAPTION & ~win32con.WS_THICKFRAME)
-    win32gui.SetWindowPos(hwnd, None, x, y, width, height, win32con.SWP_NOZORDER | win32con.SWP_NOACTIVATE | win32con.SWP_FRAMECHANGED)
+                           win32gui.GetWindowLong(hwnd,
+                                                  win32con.GWL_STYLE) & ~win32con.WS_CAPTION & ~win32con.WS_THICKFRAME)
+    win32gui.SetWindowPos(hwnd, None, x, y, width, height,
+                          win32con.SWP_NOZORDER | win32con.SWP_NOACTIVATE | win32con.SWP_FRAMECHANGED)
 
 
 # 主程序
@@ -45,15 +67,16 @@ def UIMainWindow():
     # 设置窗口大小和位置
     root.geometry(f"{window_width}x{window_height}+{position_right}+{position_down}")
 
+    # 创建左右两部分的标签，用于显示 "Please Wait..."
+    left_label = tk.Label(root, text="Please Wait...", font=("Arial", 12), bg="white")
+    left_label.place(relx=0, rely=0, relwidth=0.5, relheight=1)
+
+    right_label = tk.Label(root, text="Please Wait...", font=("Arial", 12), bg="white")
+    right_label.place(relx=0.5, rely=0, relwidth=0.5, relheight=1)
+
     # 获取两个子窗口的句柄（替换成你实际窗口的标题）
-    hwnd1 = get_window_handle("Figure 1")
-    hwnd2 = get_window_handle("Text Display")
-
-    root.update_idletasks()  # 更新主窗口尺寸信息
-
-    # 嵌入子窗口
-    embed_window(root.winfo_id(), hwnd1, 0, 0, root.winfo_width() // 2, root.winfo_height())
-    embed_window(root.winfo_id(), hwnd2, root.winfo_width() // 2, 0, root.winfo_width() // 2, root.winfo_height())
+    hwnd1 = get_window_handle("Figure 1", "Left", root, left_label, right_label)
+    hwnd2 = get_window_handle("Text Display", "Right", root, left_label, right_label)
 
     # 将焦点设置回主窗口
     win32gui.SetForegroundWindow(root.winfo_id())
@@ -68,8 +91,10 @@ def UIMainWindow():
         new_width = root.winfo_width()
         new_height = root.winfo_height()
         if new_width != last_width or new_height != last_height:
-            embed_window(root.winfo_id(), hwnd1, 0, 0, new_width // 2, new_height)
-            embed_window(root.winfo_id(), hwnd2, new_width // 2, 0, new_width // 2, new_height)
+            if hwnd1:
+                embed_window(root.winfo_id(), hwnd1, 0, 0, new_width // 2, new_height)
+            if hwnd2:
+                embed_window(root.winfo_id(), hwnd2, new_width // 2, 0, new_width // 2, new_height)
             # 将焦点设置回主窗口
             win32gui.SetForegroundWindow(root.winfo_id())
             # 更新记录的窗口大小
