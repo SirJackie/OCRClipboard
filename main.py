@@ -1,4 +1,5 @@
-from ClipboardOCR import OCRDetector, OCRVisualizer
+from OCRDetector import OCRDetector
+from OCRVisualizer import OCRVisualizer
 from ClipboardUI import ClipboardUI
 from ImageHelper import *
 import time
