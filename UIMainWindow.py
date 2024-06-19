@@ -26,10 +26,9 @@ def embed_window(parent, hwnd, x, y, width, height):
 
 
 # 主程序
-def main():
+def UIMainWindow():
     root = tk.Tk()
     root.title("主窗口")
-    # root.geometry("800x600")  # 设置主窗口初始大小
 
     # 获取屏幕的宽度和高度
     screen_width = root.winfo_screenwidth()
@@ -83,4 +82,4 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    UIMainWindow()
