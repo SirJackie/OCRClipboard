@@ -4,7 +4,7 @@ import os
 import matplotlib.pyplot as plt
 import matplotlib.patches as patches
 from matplotlib.widgets import RectangleSelector
-import tempfile
+from PathHelper import *
 
 
 class OCRDetector:
@@ -38,7 +38,8 @@ class OCRDetector:
         img_resized = img.resize((new_width, new_height))  # 保持宽高比例调整分辨率
 
         # 保存调整后的图像
-        resized_img_path = os.path.join(tempfile.gettempdir(), "resized_image.jpg")
+        tempDir = TempDir()
+        resized_img_path = tempDir.At("resized_image", ".jpg")
         img_resized.save(resized_img_path)
 
         # Do OCR Detection
