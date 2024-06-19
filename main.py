@@ -1,7 +1,3 @@
-from OCRDetector import OCRDetector
-from UIClipSide import UIClipSide
-from UIOCRSide import UIOCRSide
-from UIMainWindow import UIMainWindow
 from SubprocessHelper import Subprocess
 import json
 
@@ -15,8 +11,22 @@ if __name__ == "__main__":
     # Image
     img_path = "./Images/师兄啊师兄优酷目录.png"
 
+    # Lazy Loading, Ensure the Minimal Memory Occupation when fork()
+    from UIMainWindow import UIMainWindow
+
     # Create Main Window First
     uiMainWindow = Subprocess(UIMainWindow)
+
+    # Lazy Loading, Ensure the Minimal Memory Occupation when fork()
+    from UIClipSide import UIClipSide
+
+    # UI Clip Side
+    uiClipSide = Subprocess(UIClipSide)
+    uiClipSide.Send("<鼠标拖动，框选要识别的文字>")
+
+    # Lazy Loading, Ensure the Minimal Memory Occupation when fork()
+    from OCRDetector import OCRDetector
+    from UIOCRSide import UIOCRSide
 
     # OCR Detect
     ocrDetector = OCRDetector()
@@ -26,10 +36,6 @@ if __name__ == "__main__":
     uiOCRSide = Subprocess(UIOCRSide)
     uiOCRSide.Send(json.dumps(ocr_result))
     uiOCRSide.Send(img_path)
-
-    # UI Clip Side
-    uiClipSide = Subprocess(UIClipSide)
-    uiClipSide.Send("<鼠标拖动，框选要识别的文字>")
 
     while True:
         str = uiOCRSide.Recv()  # Not Async, It's Synced.
