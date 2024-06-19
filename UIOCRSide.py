@@ -2,9 +2,17 @@ from OCRDetector import OCRDetector
 from OCRVisualizer import OCRVisualizer
 from SubprocessHelper import Subprocess
 import time
+import json
 
 
 def UIOCRSide(pipe_conn):
+    # Get OCR Result from Pipe
+    ocr_result = None
+    while True:
+        if pipe_conn.poll():
+            ocr_result = pipe_conn.recv()
+            break
+
     # Get Image Path from Pipe
     img_path = None
     while True:
@@ -12,28 +20,28 @@ def UIOCRSide(pipe_conn):
             img_path = pipe_conn.recv()
             break
 
-    # OCR Detect
-    ocrDetector = OCRDetector()
-    result = ocrDetector.Detect(img_path)
+    # Read JSON
+    ocr_result = json.loads(ocr_result)
 
     # OCR Visualize
-    ocrVisualizer = OCRVisualizer(result, img_path)
+    ocrVisualizer = OCRVisualizer(ocr_result, img_path)
     # ocrVisualizer.BindExternalCallback(MyExternalCallback)
     ocrVisualizer.Visualize()
-
-    pipe_conn.send("Success")
 
 
 if __name__ == "__main__":
 
-    uiOCRSide = Subprocess(UIOCRSide)
-    uiOCRSide.Send("./Images/师兄啊师兄优酷目录.png")
+    # Image
+    img_path = "./Images/师兄啊师兄优酷目录.png"
 
-    while True:
-        if uiOCRSide.parent_conn.poll():
-            message = uiOCRSide.parent_conn.recv()
-            assert message == "Success"
-            break
+    # OCR Detect
+    ocrDetector = OCRDetector()
+    ocr_result = ocrDetector.Detect(img_path)
+
+    # OCR Visualize
+    uiOCRSide = Subprocess(UIOCRSide)
+    uiOCRSide.Send(json.dumps(ocr_result))
+    uiOCRSide.Send(img_path)
 
     while True:
         print("Loop")
