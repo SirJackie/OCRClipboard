@@ -11,11 +11,11 @@ if __name__ == "__main__":
     # Image
     img_path = "./Images/师兄啊师兄优酷目录.png"
 
-    # # Lazy Loading, Ensure the Minimal Memory Occupation when fork()
-    # from UIMainWindow import UIMainWindow
-    #
-    # # Create Main Window First
-    # uiMainWindow = Subprocess(UIMainWindow)
+    # Lazy Loading, Ensure the Minimal Memory Occupation when fork()
+    from UIMainWindow import UIMainWindow
+
+    # Create Main Window First
+    uiMainWindow = Subprocess(UIMainWindow)
 
     # Lazy Loading, Ensure the Minimal Memory Occupation when fork()
     from UIClipSide import UIClipSide

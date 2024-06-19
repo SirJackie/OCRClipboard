@@ -7,9 +7,14 @@ import pygetwindow as gw
 # 启用高DPI支持
 windll.shcore.SetProcessDpiAwareness(1)
 
+# Global Hwnd Definition
+hwnd1 = None
+hwnd2 = None
+
 
 # 获取窗口句柄，定时检查直到找到窗口为止
 def get_window_handle(title, leftOrRight, root, left_label, right_label):
+    global hwnd1, hwnd2  # Global Variable, For Handle Sharing between Functions.
     try:
         window = gw.getWindowsWithTitle(title)
         if window:
@@ -19,12 +24,13 @@ def get_window_handle(title, leftOrRight, root, left_label, right_label):
                 embed_window(
                     root.winfo_id(), hwnd, 0, 0, root.winfo_width() // 2, root.winfo_height()
                 )
+                hwnd1 = hwnd
             if leftOrRight == "Right":
                 embed_window(
                     root.winfo_id(), hwnd, root.winfo_width() // 2, 0, root.winfo_width() // 2, root.winfo_height()
                 )
+                hwnd2 = hwnd
 
-            return hwnd
     except gw.PyGetWindowException:
         pass  # Handle exception if window list cannot be retrieved
 
@@ -34,7 +40,6 @@ def get_window_handle(title, leftOrRight, root, left_label, right_label):
 
     # 定时器，定期检查窗口是否已经可用
     root.after(10, lambda: get_window_handle(title, leftOrRight, root, left_label, right_label))
-    return None
 
 
 # 嵌入窗口
@@ -49,6 +54,8 @@ def embed_window(parent, hwnd, x, y, width, height):
 
 # 主程序
 def UIMainWindow(pipe_conn):
+    global hwnd1, hwnd2  # Global Variable, For Handle Sharing between Functions.
+
     root = tk.Tk()
     root.title("主窗口")
 
@@ -75,8 +82,8 @@ def UIMainWindow(pipe_conn):
     right_label.place(relx=0.5, rely=0, relwidth=0.5, relheight=1)
 
     # 获取两个子窗口的句柄（替换成你实际窗口的标题）
-    hwnd1 = get_window_handle("Figure 1", "Left", root, left_label, right_label)
-    hwnd2 = get_window_handle("Text Display", "Right", root, left_label, right_label)
+    get_window_handle("Figure 1", "Left", root, left_label, right_label)
+    get_window_handle("Text Display", "Right", root, left_label, right_label)
 
     # 将焦点设置回主窗口
     win32gui.SetForegroundWindow(root.winfo_id())
@@ -87,17 +94,20 @@ def UIMainWindow(pipe_conn):
 
     # 当主窗口尺寸改变时调整子窗口大小
     def on_resize(event):
-        nonlocal last_width, last_height
-        new_width = root.winfo_width()
-        new_height = root.winfo_height()
-        if new_width != last_width or new_height != last_height:
-            embed_window(root.winfo_id(), hwnd1, 0, 0, new_width // 2, new_height)
-            embed_window(root.winfo_id(), hwnd2, new_width // 2, 0, new_width // 2, new_height)
-            # 将焦点设置回主窗口
-            win32gui.SetForegroundWindow(root.winfo_id())
-            # 更新记录的窗口大小
-            last_width = new_width
-            last_height = new_height
+        global hwnd1, hwnd2  # Global Variable, For Handle Sharing between Functions.
+
+        if hwnd1 and hwnd2:
+            nonlocal last_width, last_height
+            new_width = root.winfo_width()
+            new_height = root.winfo_height()
+            if new_width != last_width or new_height != last_height:
+                embed_window(root.winfo_id(), hwnd1, 0, 0, new_width // 2, new_height)
+                embed_window(root.winfo_id(), hwnd2, new_width // 2, 0, new_width // 2, new_height)
+                # 将焦点设置回主窗口
+                win32gui.SetForegroundWindow(root.winfo_id())
+                # 更新记录的窗口大小
+                last_width = new_width
+                last_height = new_height
 
     root.bind("<Configure>", on_resize)
 
