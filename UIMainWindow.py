@@ -33,7 +33,7 @@ def get_window_handle(title, leftOrRight, root, left_label, right_label):
     right_label.config(text="Please Wait...")
 
     # 定时器，定期检查窗口是否已经可用
-    root.after(1000, lambda: get_window_handle(title, leftOrRight, root, left_label, right_label))
+    root.after(10, lambda: get_window_handle(title, leftOrRight, root, left_label, right_label))
     return None
 
 
