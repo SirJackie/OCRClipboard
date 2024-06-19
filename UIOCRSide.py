@@ -23,9 +23,12 @@ def UIOCRSide(pipe_conn):
     # Read JSON
     ocr_result = json.loads(ocr_result)
 
+    def CallbackForPipeRedirect(str):
+        pipe_conn.send(str)
+
     # OCR Visualize
     ocrVisualizer = OCRVisualizer(ocr_result, img_path)
-    # ocrVisualizer.BindExternalCallback(MyExternalCallback)
+    ocrVisualizer.BindExternalCallback(CallbackForPipeRedirect)
     ocrVisualizer.Visualize()
 
 

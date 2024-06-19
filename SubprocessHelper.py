@@ -1,5 +1,6 @@
 import multiprocessing
 import atexit
+import time
 
 
 class Subprocess:
@@ -17,6 +18,13 @@ class Subprocess:
 
     def Send(self, string):
         self.parent_conn.send(string)
+
+    def Recv(self):
+        while True:
+            if self.parent_conn.poll():
+                message = self.parent_conn.recv()
+                return message
+            time.sleep(0.01)
 
     def Close(self):
         # Terminate Sub-Process
