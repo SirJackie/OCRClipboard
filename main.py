@@ -1,4 +1,5 @@
 from SubprocessHelper import Subprocess
+from PathHelper import DeQuoteIze
 import json
 import time
 import os
@@ -21,7 +22,7 @@ if __name__ == "__main__":
     print("------------------------------")
 
     # Image
-    img_path = input("要识别的图片，拖进来：")
+    img_path = DeQuoteIze(input("要识别的图片，拖进来："))
 
     # Lazy Loading, Ensure the Minimal Memory Occupation when fork()
     from UIMainWindow import UIMainWindow
