@@ -1,7 +1,7 @@
 import matplotlib.pyplot as plt
 import matplotlib.patches as patches
 from matplotlib.widgets import RectangleSelector
-from ImageHelper import *
+from HelperImage import *
 
 
 class OCRVisualizer:

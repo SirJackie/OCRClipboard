@@ -1,5 +1,5 @@
 from PIL import Image
-from PathHelper import *
+from HelperPath import *
 
 
 def LoadImage(img_path):

@@ -1,6 +1,6 @@
 from OCRDetector import OCRDetector
 from OCRVisualizer import OCRVisualizer
-from SubprocessHelper import Subprocess
+from HelperSubprocess import Subprocess
 import time
 import json
 

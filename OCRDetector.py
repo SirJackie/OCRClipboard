@@ -1,5 +1,5 @@
 from paddleocr import PaddleOCR
-from ImageHelper import *
+from HelperImage import *
 
 
 class OCRDetector:
