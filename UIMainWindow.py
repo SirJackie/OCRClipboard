@@ -11,6 +11,9 @@ windll.shcore.SetProcessDpiAwareness(1)
 hwnd1 = None
 hwnd2 = None
 
+waiting_msg = "OCRClipboard by SirJackie\nGitHub: https://github.com/SirJackie\nPlease Wait..."
+waiting_font = ("Arial", 18)
+
 
 # 获取窗口句柄，定时检查直到找到窗口为止
 def get_window_handle(title, leftOrRight, root, left_label, right_label):
@@ -34,9 +37,9 @@ def get_window_handle(title, leftOrRight, root, left_label, right_label):
     except gw.PyGetWindowException:
         pass  # Handle exception if window list cannot be retrieved
 
-    # 如果未找到窗口，则显示 "Please Wait..." 标签填充左右两部分
-    left_label.config(text="Please Wait...")
-    right_label.config(text="Please Wait...")
+    # 如果未找到窗口，则显示 waiting_msg 标签填充左右两部分
+    left_label.config(text=waiting_msg)
+    right_label.config(text=waiting_msg)
 
     # 定时器，定期检查窗口是否已经可用
     root.after(10, lambda: get_window_handle(title, leftOrRight, root, left_label, right_label))
@@ -57,7 +60,7 @@ def UIMainWindow(pipe_conn):
     global hwnd1, hwnd2  # Global Variable, For Handle Sharing between Functions.
 
     root = tk.Tk()
-    root.title("主窗口")
+    root.title("OCRClipboard by SirJackie")
 
     # 获取屏幕的宽度和高度
     screen_width = root.winfo_screenwidth()
@@ -74,11 +77,11 @@ def UIMainWindow(pipe_conn):
     # 设置窗口大小和位置
     root.geometry(f"{window_width}x{window_height}+{position_right}+{position_down}")
 
-    # 创建左右两部分的标签，用于显示 "Please Wait..."
-    left_label = tk.Label(root, text="Please Wait...", font=("Arial", 12), bg="white")
+    # 创建左右两部分的标签，用于显示 waiting_msg
+    left_label = tk.Label(root, text=waiting_msg, font=waiting_font, bg="white")
     left_label.place(relx=0, rely=0, relwidth=0.5, relheight=1)
 
-    right_label = tk.Label(root, text="Please Wait...", font=("Arial", 12), bg="white")
+    right_label = tk.Label(root, text=waiting_msg, font=waiting_font, bg="white")
     right_label.place(relx=0.5, rely=0, relwidth=0.5, relheight=1)
 
     # 获取两个子窗口的句柄（替换成你实际窗口的标题）
